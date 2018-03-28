@@ -213,7 +213,7 @@ var getProjectName = function () {
 var generateIcon = function (platform, icon) {
   var deferred = Q.defer();
   var srcPath = 'icon-' + platform.name + '.png'
-  if (!fs.existsSync(platformPath)) {
+  if (!fs.existsSync(srcPath)) {
 		deferred.resolve()
 		display.error(srcPath + " not found")
 		return
