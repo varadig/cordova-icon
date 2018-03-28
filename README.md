@@ -22,16 +22,15 @@ $ sudo npm install cordova-icon -g
 
 ### Usage
 
-Create an `icon.png` file in the root folder of your cordova project.
-You can provide a platform-specific icon by naming it `icon-[platform].png`
-(e.g `icon-android.png`, `icon-ios.png`).
+Create an `icon-[platform].png` file in the root folder of your cordova project for each platform (e.g `icon-android.png`, `icon-ios.png`).
+
 Then run:
 
      $ cordova-icon
 
-You also can specify manually a location for your `config.xml` or `icon.png`:
+You also can specify manually a location for your `config.xml`.
 
-     $ cordova-icon --config=config.xml --icon=icon.png
+     $ cordova-icon --config=config.xml
 
 If you run a old version of Cordova for iOS / Mac and you need your files in `/Resources/icons/`, use this option:
 
