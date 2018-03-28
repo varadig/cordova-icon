@@ -215,6 +215,7 @@ var generateIcon = function (platform, icon) {
   var srcPath = 'icon-' + platform.name + '.png'
   if (!fs.existsSync(platformPath)) {
 		deferred.resolve()
+		display.error(srcPath + " not found")
 		return
   }
   var dstPath = platform.iconsPath + icon.name;
