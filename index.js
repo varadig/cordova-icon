@@ -12,7 +12,6 @@ var argv   = require('minimist')(process.argv.slice(2));
  */
 var settings = {};
 settings.CONFIG_FILE = argv.config || 'config.xml';
-settings.ICON_FILE = argv.icon || 'icon.png';
 settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
 settings.ICON_1024_BGCOLOR = argv['i1024bg'] || 'white';
 
@@ -213,10 +212,10 @@ var getProjectName = function () {
  */
 var generateIcon = function (platform, icon) {
   var deferred = Q.defer();
-  var srcPath = settings.ICON_FILE;
-  var platformPath = srcPath.replace(/\.png$/, '-' + platform.name + '.png');
-  if (fs.existsSync(platformPath)) {
-    srcPath = platformPath;
+  var srcPath = 'icon-' + platform.name + '.png'
+  if (!fs.existsSync(platformPath)) {
+		deferred.resolve()
+		return
   }
   var dstPath = platform.iconsPath + icon.name;
   var dst = path.dirname(dstPath);
