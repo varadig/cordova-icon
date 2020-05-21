@@ -1,19 +1,19 @@
-var fs     = require('fs-extra');
-var path   = require('path');
-var xml2js = require('xml2js');
-var ig     = require('imagemagick');
-var colors = require('colors');
-var _      = require('underscore');
-var Q      = require('q');
-var argv   = require('minimist')(process.argv.slice(2));
+var fs = require("fs-extra");
+var path = require("path");
+var xml2js = require("xml2js");
+var ig = require("imagemagick");
+var colors = require("colors");
+var _ = require("underscore");
+var Q = require("q");
+var argv = require("minimist")(process.argv.slice(2));
 
 /**
  * @var {Object} settings - names of the config file and of the icon image
  */
 var settings = {};
-settings.CONFIG_FILE = argv.config || 'config.xml';
-settings.OLD_XCODE_PATH = argv['xcode-old'] || false;
-settings.ICON_1024_BGCOLOR = argv['i1024bg'] || 'white';
+settings.CONFIG_FILE = argv.config || "config.xml";
+settings.OLD_XCODE_PATH = argv["xcode-old"] || false;
+settings.ICON_1024_BGCOLOR = argv["i1024bg"] || "white";
 
 /**
  * Check which platforms are added to the project and return their icon names and sizes
@@ -24,138 +24,159 @@ settings.ICON_1024_BGCOLOR = argv['i1024bg'] || 'white';
 var getPlatforms = function (projectName) {
   var deferred = Q.defer();
   var platforms = [];
-  var xcodeFolder = '/Images.xcassets/AppIcon.appiconset/';
+  var xcodeFolder = "/Images.xcassets/AppIcon.appiconset/";
 
   if (settings.OLD_XCODE_PATH) {
-    xcodeFolder = '/Resources/icons/';
+    xcodeFolder = "/Resources/icons/";
   }
 
   platforms.push({
-    name : 'ios',
+    name: "ios",
     // TODO: use async fs.exists
-    isAdded : fs.existsSync('platforms/ios'),
-    iconsPath : 'platforms/ios/' + projectName + xcodeFolder,
-    icons : [
-      { name: 'icon-20.png',             size : 20   },
-      { name: 'icon-20@2x.png',          size : 40   },
-      { name: 'icon-20@3x.png',          size : 60   },
-      { name: 'icon-40.png',             size : 40   },
-      { name: 'icon-40@2x.png',          size : 80   },
-      { name: 'icon-50.png',             size : 50   },
-      { name: 'icon-50@2x.png',          size : 100  },
-      { name: 'icon-60@2x.png',          size : 120  },
-      { name: 'icon-60@3x.png',          size : 180  },
-      { name: 'icon-72.png',             size : 72   },
-      { name: 'icon-72@2x.png',          size : 144  },
-      { name: 'icon-76.png',             size : 76   },
-      { name: 'icon-76@2x.png',          size : 152  },
-      { name: 'icon-83.5@2x.png',        size : 167  },
-      { name: 'icon-1024.png',           size : 1024 },
-      { name: 'icon-small.png',          size : 29   },
-      { name: 'icon-small@2x.png',       size : 58   },
-      { name: 'icon-small@3x.png',       size : 87   },
-      { name: 'icon.png',                size : 57   },
-      { name: 'icon@2x.png',             size : 114  },
-      { name: 'AppIcon24x24@2x.png',     size : 48   },
-      { name: 'AppIcon27.5x27.5@2x.png', size : 55   },
-      { name: 'AppIcon29x29@2x.png',     size : 58   },
-      { name: 'AppIcon29x29@3x.png',     size : 87   },
-      { name: 'AppIcon40x40@2x.png',     size : 80   },
-      { name: 'AppIcon44x44@2x.png',     size : 88   },
-      { name: 'AppIcon86x86@2x.png',     size : 172  },
-      { name: 'AppIcon98x98@2x.png',     size : 196  }
-    ]
+    isAdded: fs.existsSync("platforms/ios"),
+    iconsPath: "platforms/ios/" + projectName + xcodeFolder,
+    icons: [
+      { name: "icon-20.png", size: 20 },
+      { name: "icon-20@2x.png", size: 40 },
+      { name: "icon-20@3x.png", size: 60 },
+      { name: "icon-40.png", size: 40 },
+      { name: "icon-40@2x.png", size: 80 },
+      { name: "icon-50.png", size: 50 },
+      { name: "icon-50@2x.png", size: 100 },
+      { name: "icon-60@2x.png", size: 120 },
+      { name: "icon-60@3x.png", size: 180 },
+      { name: "icon-72.png", size: 72 },
+      { name: "icon-72@2x.png", size: 144 },
+      { name: "icon-76.png", size: 76 },
+      { name: "icon-76@2x.png", size: 152 },
+      { name: "icon-83.5@2x.png", size: 167 },
+      { name: "icon-1024.png", size: 1024 },
+      { name: "icon-small.png", size: 29 },
+      { name: "icon-small@2x.png", size: 58 },
+      { name: "icon-small@3x.png", size: 87 },
+      { name: "icon.png", size: 57 },
+      { name: "icon@2x.png", size: 114 },
+      { name: "AppIcon24x24@2x.png", size: 48 },
+      { name: "AppIcon27.5x27.5@2x.png", size: 55 },
+      { name: "AppIcon29x29@2x.png", size: 58 },
+      { name: "AppIcon29x29@3x.png", size: 87 },
+      { name: "AppIcon40x40@2x.png", size: 80 },
+      { name: "AppIcon44x44@2x.png", size: 88 },
+      { name: "AppIcon86x86@2x.png", size: 172 },
+      { name: "AppIcon98x98@2x.png", size: 196 },
+    ],
+  });
+  // platforms.push({
+  //   name: "android",
+  //   isAdded: fs.existsSync("platforms/android"),
+  //   iconsPath: "platforms/android/app/src/main/res/",
+  //   icons: [
+  //     { name: "drawable/icon.png", size: 96 },
+  //     { name: "drawable-hdpi/icon.png", size: 72 },
+  //     { name: "drawable-ldpi/icon.png", size: 36 },
+  //     { name: "drawable-mdpi/icon.png", size: 48 },
+  //     { name: "drawable-xhdpi/icon.png", size: 96 },
+  //     { name: "drawable-xxhdpi/icon.png", size: 144 },
+  //     { name: "drawable-xxxhdpi/icon.png", size: 192 },
+  //     { name: "mipmap-hdpi/icon.png", size: 72 },
+  //     { name: "mipmap-ldpi/icon.png", size: 36 },
+  //     { name: "mipmap-mdpi/icon.png", size: 48 },
+  //     { name: "mipmap-xhdpi/icon.png", size: 96 },
+  //     { name: "mipmap-xxhdpi/icon.png", size: 144 },
+  //     { name: "mipmap-xxxhdpi/icon.png", size: 192 },
+  //   ],
+  // });
+
+  platforms.push({
+    name: "android",
+    isAdded: fs.existsSync("platforms/android"),
+    iconsPath: "platforms/android/app/src/main/res/",
+    icons: [
+      { name: "drawable/ic_launcher.png", size: 96 },
+      { name: "drawable-hdpi/ic_launcher.png", size: 72 },
+      { name: "drawable-ldpi/ic_launcher.png", size: 36 },
+      { name: "drawable-mdpi/ic_launcher.png", size: 48 },
+      { name: "drawable-xhdpi/ic_launcher.png", size: 96 },
+      { name: "drawable-xxhdpi/ic_launcher.png", size: 144 },
+      { name: "drawable-xxxhdpi/ic_launcher.png", size: 192 },
+      { name: "mipmap-hdpi/ic_launcher.png", size: 72 },
+      { name: "mipmap-ldpi/ic_launcher.png", size: 36 },
+      { name: "mipmap-mdpi/ic_launcher.png", size: 48 },
+      { name: "mipmap-xhdpi/ic_launcher.png", size: 96 },
+      { name: "mipmap-xxhdpi/ic_launcher.png", size: 144 },
+      { name: "mipmap-xxxhdpi/ic_launcher.png", size: 192 },
+    ],
   });
   platforms.push({
-    name : 'android',
-    isAdded : fs.existsSync('platforms/android'),
-    iconsPath : 'platforms/android/app/src/main/res/',
-    icons : [
-      { name : 'drawable/icon.png',       size : 96 },
-      { name : 'drawable-hdpi/icon.png',  size : 72 },
-      { name : 'drawable-ldpi/icon.png',  size : 36 },
-      { name : 'drawable-mdpi/icon.png',  size : 48 },
-      { name : 'drawable-xhdpi/icon.png', size : 96 },
-      { name : 'drawable-xxhdpi/icon.png', size : 144 },
-      { name : 'drawable-xxxhdpi/icon.png', size : 192 },
-      { name : 'mipmap-hdpi/icon.png',  size : 72 },
-      { name : 'mipmap-ldpi/icon.png',  size : 36 },
-      { name : 'mipmap-mdpi/icon.png',  size : 48 },
-      { name : 'mipmap-xhdpi/icon.png', size : 96 },
-      { name : 'mipmap-xxhdpi/icon.png', size : 144 },
-      { name : 'mipmap-xxxhdpi/icon.png', size : 192 }
-    ]
-  });
-  platforms.push({
-    name : 'osx',
+    name: "osx",
     // TODO: use async fs.exists
-    isAdded : fs.existsSync('platforms/osx'),
-    iconsPath : 'platforms/osx/' + projectName + xcodeFolder,
-    icons : [
-      { name : 'icon-16x16.png',    size : 16  },
-      { name : 'icon-32x32.png',    size : 32  },
-      { name : 'icon-64x64.png',    size : 64  },
-      { name : 'icon-128x128.png',  size : 128 },
-      { name : 'icon-256x256.png',  size : 256 },
-      { name : 'icon-512x512.png',  size : 512 }
-    ]
+    isAdded: fs.existsSync("platforms/osx"),
+    iconsPath: "platforms/osx/" + projectName + xcodeFolder,
+    icons: [
+      { name: "icon-16x16.png", size: 16 },
+      { name: "icon-32x32.png", size: 32 },
+      { name: "icon-64x64.png", size: 64 },
+      { name: "icon-128x128.png", size: 128 },
+      { name: "icon-256x256.png", size: 256 },
+      { name: "icon-512x512.png", size: 512 },
+    ],
   });
   platforms.push({
-    name : 'windows',
-    isAdded : fs.existsSync('platforms/windows'),
-    iconsPath : 'platforms/windows/images/',
-    icons : [
-      { name : 'StoreLogo.scale-100.png', size : 50  },
-      { name : 'StoreLogo.scale-125.png', size : 63  },
-      { name : 'StoreLogo.scale-140.png', size : 70  },
-      { name : 'StoreLogo.scale-150.png', size : 75  },
-      { name : 'StoreLogo.scale-180.png', size : 90  },
-      { name : 'StoreLogo.scale-200.png', size : 100 },
-      { name : 'StoreLogo.scale-240.png', size : 120 },
-      { name : 'StoreLogo.scale-400.png', size : 200 },
+    name: "windows",
+    isAdded: fs.existsSync("platforms/windows"),
+    iconsPath: "platforms/windows/images/",
+    icons: [
+      { name: "StoreLogo.scale-100.png", size: 50 },
+      { name: "StoreLogo.scale-125.png", size: 63 },
+      { name: "StoreLogo.scale-140.png", size: 70 },
+      { name: "StoreLogo.scale-150.png", size: 75 },
+      { name: "StoreLogo.scale-180.png", size: 90 },
+      { name: "StoreLogo.scale-200.png", size: 100 },
+      { name: "StoreLogo.scale-240.png", size: 120 },
+      { name: "StoreLogo.scale-400.png", size: 200 },
 
-      { name : 'Square44x44Logo.scale-100.png', size : 44  },
-      { name : 'Square44x44Logo.scale-125.png', size : 55  },
-      { name : 'Square44x44Logo.scale-140.png', size : 62  },
-      { name : 'Square44x44Logo.scale-150.png', size : 66  },
-      { name : 'Square44x44Logo.scale-200.png', size : 88  },
-      { name : 'Square44x44Logo.scale-240.png', size : 106  },
-      { name : 'Square44x44Logo.scale-400.png', size : 176 },
+      { name: "Square44x44Logo.scale-100.png", size: 44 },
+      { name: "Square44x44Logo.scale-125.png", size: 55 },
+      { name: "Square44x44Logo.scale-140.png", size: 62 },
+      { name: "Square44x44Logo.scale-150.png", size: 66 },
+      { name: "Square44x44Logo.scale-200.png", size: 88 },
+      { name: "Square44x44Logo.scale-240.png", size: 106 },
+      { name: "Square44x44Logo.scale-400.png", size: 176 },
 
-      { name : 'Square71x71Logo.scale-100.png', size : 71  },
-      { name : 'Square71x71Logo.scale-125.png', size : 89  },
-      { name : 'Square71x71Logo.scale-140.png', size : 99 },
-      { name : 'Square71x71Logo.scale-150.png', size : 107 },
-      { name : 'Square71x71Logo.scale-200.png', size : 142 },
-      { name : 'Square71x71Logo.scale-240.png', size : 170 },
-      { name : 'Square71x71Logo.scale-400.png', size : 284 },
+      { name: "Square71x71Logo.scale-100.png", size: 71 },
+      { name: "Square71x71Logo.scale-125.png", size: 89 },
+      { name: "Square71x71Logo.scale-140.png", size: 99 },
+      { name: "Square71x71Logo.scale-150.png", size: 107 },
+      { name: "Square71x71Logo.scale-200.png", size: 142 },
+      { name: "Square71x71Logo.scale-240.png", size: 170 },
+      { name: "Square71x71Logo.scale-400.png", size: 284 },
 
-      { name : 'Square150x150Logo.scale-100.png', size : 150 },
-      { name : 'Square150x150Logo.scale-125.png', size : 188 },
-      { name : 'Square150x150Logo.scale-140.png', size : 210 },
-      { name : 'Square150x150Logo.scale-150.png', size : 225 },
-      { name : 'Square150x150Logo.scale-200.png', size : 300 },
-      { name : 'Square150x150Logo.scale-240.png', size : 360 },
-      { name : 'Square150x150Logo.scale-400.png', size : 600 },
+      { name: "Square150x150Logo.scale-100.png", size: 150 },
+      { name: "Square150x150Logo.scale-125.png", size: 188 },
+      { name: "Square150x150Logo.scale-140.png", size: 210 },
+      { name: "Square150x150Logo.scale-150.png", size: 225 },
+      { name: "Square150x150Logo.scale-200.png", size: 300 },
+      { name: "Square150x150Logo.scale-240.png", size: 360 },
+      { name: "Square150x150Logo.scale-400.png", size: 600 },
 
-      { name : 'Square310x310Logo.scale-100.png', size : 310  },
-      { name : 'Square310x310Logo.scale-125.png', size : 388  },
-      { name : 'Square310x310Logo.scale-140.png', size : 434  },
-      { name : 'Square310x310Logo.scale-150.png', size : 465  },
-      { name : 'Square310x310Logo.scale-180.png', size : 558  },
-      { name : 'Square310x310Logo.scale-200.png', size : 620  },
-      { name : 'Square310x310Logo.scale-400.png', size : 1240 },
+      { name: "Square310x310Logo.scale-100.png", size: 310 },
+      { name: "Square310x310Logo.scale-125.png", size: 388 },
+      { name: "Square310x310Logo.scale-140.png", size: 434 },
+      { name: "Square310x310Logo.scale-150.png", size: 465 },
+      { name: "Square310x310Logo.scale-180.png", size: 558 },
+      { name: "Square310x310Logo.scale-200.png", size: 620 },
+      { name: "Square310x310Logo.scale-400.png", size: 1240 },
 
-      { name : 'Wide310x150Logo.scale-80.png', size : 248, height : 120  },
-      { name : 'Wide310x150Logo.scale-100.png', size : 310, height : 150  },
-      { name : 'Wide310x150Logo.scale-125.png', size : 388, height : 188  },
-      { name : 'Wide310x150Logo.scale-140.png', size : 434, height : 210  },
-      { name : 'Wide310x150Logo.scale-150.png', size : 465, height : 225  },
-      { name : 'Wide310x150Logo.scale-180.png', size : 558, height : 270  },
-      { name : 'Wide310x150Logo.scale-200.png', size : 620, height : 300  },
-      { name : 'Wide310x150Logo.scale-240.png', size : 744, height : 360  },
-      { name : 'Wide310x150Logo.scale-400.png', size : 1240, height : 600 }
-    ]
+      { name: "Wide310x150Logo.scale-80.png", size: 248, height: 120 },
+      { name: "Wide310x150Logo.scale-100.png", size: 310, height: 150 },
+      { name: "Wide310x150Logo.scale-125.png", size: 388, height: 188 },
+      { name: "Wide310x150Logo.scale-140.png", size: 434, height: 210 },
+      { name: "Wide310x150Logo.scale-150.png", size: 465, height: 225 },
+      { name: "Wide310x150Logo.scale-180.png", size: 558, height: 270 },
+      { name: "Wide310x150Logo.scale-200.png", size: 620, height: 300 },
+      { name: "Wide310x150Logo.scale-240.png", size: 744, height: 360 },
+      { name: "Wide310x150Logo.scale-400.png", size: 1240, height: 600 },
+    ],
   });
   // TODO: add missing platforms
   deferred.resolve(platforms);
@@ -167,17 +188,17 @@ var getPlatforms = function (projectName) {
  */
 var display = {};
 display.success = function (str) {
-  str = '✓  '.green + str;
-  console.log('  ' + str);
+  str = "✓  ".green + str;
+  console.log("  " + str);
 };
 display.error = function (str) {
-  str = '✗  '.red + str;
-  console.log('  ' + str);
+  str = "✗  ".red + str;
+  console.log("  " + str);
 };
 display.header = function (str) {
-  console.log('');
-  console.log(' ' + str.cyan.underline);
-  console.log('');
+  console.log("");
+  console.log(" " + str.cyan.underline);
+  console.log("");
 };
 
 /**
@@ -212,64 +233,78 @@ var getProjectName = function () {
  */
 var generateIcon = function (platform, icon) {
   var deferred = Q.defer();
-  var srcPath = 'icon-' + platform.name + '.png'
+  var srcPath = "icon-" + platform.name + ".png";
   if (!fs.existsSync(srcPath)) {
-		deferred.resolve()
-		display.error(srcPath + " not found")
-		return
+    deferred.resolve();
+    display.error(srcPath + " not found");
+    return;
   }
   var dstPath = platform.iconsPath + icon.name;
   var dst = path.dirname(dstPath);
   if (!fs.existsSync(dst)) {
     fs.mkdirsSync(dst);
   }
-  ig.resize({
-    srcPath: srcPath,
-    dstPath: dstPath,
-    quality: 1,
-    format: 'png',
-    width: icon.size,
-    height: icon.size
-  } , function(err, stdout, stderr){
-    if (err) {
-      deferred.reject(err);
-    } else {
-      if (icon.name === 'icon-1024.png' && platform.name === 'ios') {
-        // https://stackoverflow.com/questions/2322750/replace-transparency-in-png-images-with-white-background
-        // convert image.png -background white -alpha remove white.png
-
-        ig.convert([dstPath,  '-background', settings.ICON_1024_BGCOLOR, '-alpha', 'remove', dstPath],
-          function(err, stdout){
-            if (err) {
-              deferred.reject(err);
-            } else {
-              deferred.resolve();
-              display.success(icon.name + ' removed image transparency');
-            }
-          });
-
-      } else {
-        deferred.resolve();
-        display.success(icon.name + ' created');
-      }
-    }
-  });
-  if (icon.height) {
-    ig.crop({
+  ig.resize(
+    {
       srcPath: srcPath,
       dstPath: dstPath,
       quality: 1,
-      format: 'png',
+      format: "png",
       width: icon.size,
-      height: icon.height
-    } , function(err, stdout, stderr){
+      height: icon.size,
+    },
+    function (err, stdout, stderr) {
       if (err) {
         deferred.reject(err);
       } else {
-        deferred.resolve();
-        display.success(icon.name + ' cropped');
+        if (icon.name === "icon-1024.png" && platform.name === "ios") {
+          // https://stackoverflow.com/questions/2322750/replace-transparency-in-png-images-with-white-background
+          // convert image.png -background white -alpha remove white.png
+
+          ig.convert(
+            [
+              dstPath,
+              "-background",
+              settings.ICON_1024_BGCOLOR,
+              "-alpha",
+              "remove",
+              dstPath,
+            ],
+            function (err, stdout) {
+              if (err) {
+                deferred.reject(err);
+              } else {
+                deferred.resolve();
+                display.success(icon.name + " removed image transparency");
+              }
+            }
+          );
+        } else {
+          deferred.resolve();
+          display.success(icon.name + " created");
+        }
       }
-    });
+    }
+  );
+  if (icon.height) {
+    ig.crop(
+      {
+        srcPath: srcPath,
+        dstPath: dstPath,
+        quality: 1,
+        format: "png",
+        width: icon.size,
+        height: icon.height,
+      },
+      function (err, stdout, stderr) {
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve();
+          display.success(icon.name + " cropped");
+        }
+      }
+    );
   }
   return deferred.promise;
 };
@@ -281,7 +316,7 @@ var generateIcon = function (platform, icon) {
  * @return {Promise}
  */
 var generateIconsForPlatform = function (platform) {
-  display.header('Generating Icons for ' + platform.name);
+  display.header("Generating Icons for " + platform.name);
   var all = [];
   var icons = platform.icons;
   icons.forEach(function (icon) {
@@ -300,12 +335,14 @@ var generateIcons = function (platforms) {
   var deferred = Q.defer();
   var sequence = Q();
   var all = [];
-  _(platforms).where({ isAdded : true }).forEach(function (platform) {
-    sequence = sequence.then(function () {
-      return generateIconsForPlatform(platform);
+  _(platforms)
+    .where({ isAdded: true })
+    .forEach(function (platform) {
+      sequence = sequence.then(function () {
+        return generateIconsForPlatform(platform);
+      });
+      all.push(sequence);
     });
-    all.push(sequence);
-  });
   Q.all(all).then(function () {
     deferred.resolve();
   });
@@ -320,21 +357,25 @@ var generateIcons = function (platforms) {
 var atLeastOnePlatformFound = function () {
   var deferred = Q.defer();
   getPlatforms().then(function (platforms) {
-    var activePlatforms = _(platforms).where({ isAdded : true });
+    var activePlatforms = _(platforms).where({ isAdded: true });
     if (activePlatforms.length > 0) {
-      display.success('platforms found: ' + _(activePlatforms).pluck('name').join(', '));
+      display.success(
+        "platforms found: " + _(activePlatforms).pluck("name").join(", ")
+      );
       deferred.resolve(platforms);
     } else {
-      display.error('No cordova platforms found. ' +
-                    'Make sure you are in the root folder of your Cordova project ' +
-                    'and add platforms with \'cordova platform add\'');
+      display.error(
+        "No cordova platforms found. " +
+          "Make sure you are in the root folder of your Cordova project " +
+          "and add platforms with 'cordova platform add'"
+      );
       deferred.reject();
     }
   });
   return deferred.promise;
 };
 
-display.header('Checking Project & Icon');
+display.header("Checking Project & Icon");
 
 atLeastOnePlatformFound()
   .then(getProjectName)
@@ -344,6 +385,7 @@ atLeastOnePlatformFound()
     if (err) {
       console.log(err);
     }
-  }).then(function () {
-    console.log('');
+  })
+  .then(function () {
+    console.log("");
   });
